@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.portfolio.pathfinding.api.RouteRequest;
 import com.portfolio.pathfinding.api.RouteRequest.Algorithm;
 import com.portfolio.pathfinding.api.RouteRequest.Cell;
+
 import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 class PathfindingEngineTest {
@@ -13,9 +15,16 @@ class PathfindingEngineTest {
     private final PathfindingEngine engine = new PathfindingEngine();
 
     @Test
+    void dfsFindsPath() {
+        var response = engine.solve(new RouteRequest(5, 5, new Cell(0, 0), new Cell(2, 2), List.of(), Algorithm.DFS));
+
+        assertTrue(response.found());
+    }
+
+    @Test
     void bfsFindsShortestPath() {
         var response = engine.solve(
-            new RouteRequest(4, 4, new Cell(0, 0), new Cell(3, 3), List.of(), Algorithm.BFS)
+                new RouteRequest(4, 4, new Cell(0, 0), new Cell(3, 3), List.of(), Algorithm.BFS)
         );
         assertTrue(response.found());
         assertEquals(6, response.pathLength());
@@ -24,14 +33,14 @@ class PathfindingEngineTest {
     @Test
     void astarAvoidsWalls() {
         var response = engine.solve(
-            new RouteRequest(
-                3,
-                3,
-                new Cell(0, 0),
-                new Cell(0, 2),
-                List.of(new Cell(0, 1)),
-                Algorithm.ASTAR
-            )
+                new RouteRequest(
+                        3,
+                        3,
+                        new Cell(0, 0),
+                        new Cell(0, 2),
+                        List.of(new Cell(0, 1)),
+                        Algorithm.ASTAR
+                )
         );
         assertTrue(response.found());
         assertEquals(4, response.pathLength());
@@ -40,14 +49,14 @@ class PathfindingEngineTest {
     @Test
     void reportsUnreachable() {
         var response = engine.solve(
-            new RouteRequest(
-                3,
-                3,
-                new Cell(0, 0),
-                new Cell(2, 2),
-                List.of(new Cell(0, 1), new Cell(1, 0)),
-                Algorithm.DIJKSTRA
-            )
+                new RouteRequest(
+                        3,
+                        3,
+                        new Cell(0, 0),
+                        new Cell(2, 2),
+                        List.of(new Cell(0, 1), new Cell(1, 0)),
+                        Algorithm.DIJKSTRA
+                )
         );
         assertFalse(response.found());
         assertTrue(response.path().isEmpty());
